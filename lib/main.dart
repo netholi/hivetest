@@ -9,7 +9,7 @@ void main() async {
   //need to ensure binding bcoz we are running code before the runApp method
   WidgetsFlutterBinding.ensureInitialized();
   //get the document directory
-  Directory? docDir = await getApplicationDocumentsDirectory();
+  Directory docDir = await getApplicationDocumentsDirectory();
   await Hive.initFlutter(docDir.path); //initialise hive
 
 //first we need to open the box o store the data. here the type is String and box is named place
@@ -42,6 +42,43 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     print('Hive test 1 ');
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Hive demo'),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  title: Text(placeBox.get('name')!),
+                );
+              },
+              itemCount: 5,
+            ),
+          ),
+          Container(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                ElevatedButton(
+                  onPressed: () {},
+                  child: Text('Add state'),
+                ),
+                ElevatedButton(
+                  onPressed: () {},
+                  child: Text('Update state'),
+                ),
+                ElevatedButton(
+                  onPressed: () {},
+                  child: Text('Delete state'),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
   }
 }
