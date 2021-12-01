@@ -33,10 +33,10 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     //refence the box we created earlier
     placeBox = Hive.box('place');
-    // placeBox.put('name', 'Kerala');
-    // placeBox.put('name', 'Tamil nadu');
+    placeBox.put('01', 'Kerala');
+    placeBox.put('02', 'Tamil nadu');
 
-    print(placeBox.get('name'));
+    print(placeBox.get('01'));
   }
 
   @override
@@ -52,10 +52,18 @@ class _MyAppState extends State<MyApp> {
             child: ListView.builder(
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
-                  title: Text(placeBox.get('name')!),
+                  title: Text(placeBox.getAt(index)!),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () {
+                      setState(() {
+                        placeBox.deleteAt(index);
+                      });
+                    },
+                  ),
                 );
               },
-              itemCount: 5,
+              itemCount: placeBox.length,
             ),
           ),
           Container(
