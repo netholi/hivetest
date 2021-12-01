@@ -51,26 +51,30 @@ class _MyAppState extends State<MyApp> {
       body: Column(
         children: [
           Expanded(
-            child: placeBox.length == 0
-                ? Text('No Data')
-                : ListView.builder(
-                    itemBuilder: (BuildContext context, int index) {
-                      return ListTile(
-                        onTap: () => selectdIndex = index,
-                        title: Text(placeBox.getAt(index)!),
-                        trailing: IconButton(
-                          icon: Icon(Icons.delete),
-                          onPressed: () {
-                            setState(() {
-                              placeBox.deleteAt(index);
-                            });
-                          },
-                        ),
-                      );
-                    },
-                    itemCount: placeBox.length,
-                  ),
-          ),
+              // placeBox.length == 0
+              // ? Text('No Data : ${placeBox.length}')
+              //  :
+              child: ValueListenableBuilder(
+                  valueListenable: placeBox.listenable(),
+                  builder: (context, Box<String> place, _) {
+                    return ListView.builder(
+                        itemBuilder: (BuildContext context, int index) {
+                          return ListTile(
+                            onTap: () => selectdIndex = index,
+                            title: Text(placeBox.getAt(index)!),
+                            trailing: IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () {
+                                setState(() {
+                                  placeBox.deleteAt(index);
+                                });
+                              },
+                            ),
+                          );
+                        },
+                        itemCount: place.length // placeBox.length,
+                        );
+                  })),
           Container(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -93,10 +97,10 @@ class _MyAppState extends State<MyApp> {
                                   TextButton(
                                       onPressed: () {
                                         final state = _nameController.text;
-                                        setState(() {
-                                          placeBox.put(placeBox.length, state);
-                                          Navigator.pop(context);
-                                        });
+                                        print(placeBox.length);
+                                        placeBox.put(placeBox.length, state);
+
+                                        Navigator.pop(context);
                                       },
                                       child: Text('Submit'))
                                 ],
@@ -125,10 +129,8 @@ class _MyAppState extends State<MyApp> {
                                   TextButton(
                                       onPressed: () {
                                         final state = _nameController.text;
-                                        setState(() {
-                                          placeBox.put(selectdIndex, state);
-                                          Navigator.pop(context);
-                                        });
+                                        placeBox.put(selectdIndex, state);
+                                        Navigator.pop(context);
                                       },
                                       child: Text('Submit'))
                                 ],
