@@ -29,12 +29,13 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   late Box<String> placeBox;
 
+  final TextEditingController _nameController = TextEditingController();
   void initState() {
     super.initState();
     //refence the box we created earlier
     placeBox = Hive.box('place');
-    placeBox.put('01', 'Kerala');
-    placeBox.put('02', 'Tamil nadu');
+    // placeBox.put('01', 'Kerala');
+    // placeBox.put('02', 'Tamil nadu');
 
     print(placeBox.get('01'));
   }
@@ -42,6 +43,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     print('Hive test 1 ');
+    int selectdIndex = 0;
     return Scaffold(
       appBar: AppBar(
         title: Text('Hive demo'),
@@ -49,39 +51,98 @@ class _MyAppState extends State<MyApp> {
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  title: Text(placeBox.getAt(index)!),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () {
-                      setState(() {
-                        placeBox.deleteAt(index);
-                      });
+            child: placeBox.length == 0
+                ? Text('No Data')
+                : ListView.builder(
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                        onTap: () => selectdIndex = index,
+                        title: Text(placeBox.getAt(index)!),
+                        trailing: IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () {
+                            setState(() {
+                              placeBox.deleteAt(index);
+                            });
+                          },
+                        ),
+                      );
                     },
+                    itemCount: placeBox.length,
                   ),
-                );
-              },
-              itemCount: placeBox.length,
-            ),
           ),
           Container(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _nameController.text = '';
+                    showDialog(
+                        context: context,
+                        builder: (_) {
+                          return Dialog(
+                            child: Container(
+                              padding: EdgeInsets.all(32),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  TextField(
+                                    controller: _nameController,
+                                  ),
+                                  TextButton(
+                                      onPressed: () {
+                                        final state = _nameController.text;
+                                        setState(() {
+                                          placeBox.put(placeBox.length, state);
+                                          Navigator.pop(context);
+                                        });
+                                      },
+                                      child: Text('Submit'))
+                                ],
+                              ),
+                            ),
+                          );
+                        });
+                  },
                   child: Text('Add state'),
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _nameController.text = placeBox.getAt(selectdIndex)!;
+                    showDialog(
+                        context: context,
+                        builder: (_) {
+                          return Dialog(
+                            child: Container(
+                              padding: EdgeInsets.all(32),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  TextField(
+                                    controller: _nameController,
+                                  ),
+                                  TextButton(
+                                      onPressed: () {
+                                        final state = _nameController.text;
+                                        setState(() {
+                                          placeBox.put(selectdIndex, state);
+                                          Navigator.pop(context);
+                                        });
+                                      },
+                                      child: Text('Submit'))
+                                ],
+                              ),
+                            ),
+                          );
+                        });
+                  },
                   child: Text('Update state'),
                 ),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: Text('Delete state'),
-                ),
+                // ElevatedButton(
+                //   onPressed: () {},
+                //   child: Text('Delete state'),
+                // ),
               ],
             ),
           )
