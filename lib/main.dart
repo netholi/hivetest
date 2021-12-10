@@ -87,18 +87,22 @@ class _MyAppState extends State<MyApp> {
                         builder: (_) {
                           return Dialog(
                             child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(36)),
                               padding: EdgeInsets.all(32),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   TextField(
+                                    decoration:
+                                        InputDecoration(hintText: 'State Name'),
                                     controller: _nameController,
                                   ),
                                   TextButton(
                                       onPressed: () {
                                         final state = _nameController.text;
                                         print(placeBox.length);
-                                        placeBox.put(placeBox.length, state);
+                                        placeBox.add(state);
 
                                         Navigator.pop(context);
                                       },
